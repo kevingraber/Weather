@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>Weather</title>
+	<meta charset="UTF-8">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -32,11 +33,17 @@
 
 		<div class="row">
 
-			<button onclick="getLocation()" class="btn-lg btn-success">Try It</button>
+			<button class="btn-primary btn-lg locateButton">Try It</button>
 			<p id="demo"></p>
 
 			<div class="col-md-8 col-md-offset-2">
-			<div id="weatherArea" class="text-center"></div>
+
+			<!-- 	<iframe src="https://embed.spotify.com/?uri=spotify:user:erebore:playlist:788MOXyTfcUb1tdw4oC7KJ" width="250" height="80" frameborder="0" allowtransparency="true"></iframe> -->
+
+				<div id="weatherArea" class="text-center"></div>
+
+				<div id="playlistArea"></div>
+
 			</div>
 		</div>
 	</div>
@@ -44,6 +51,9 @@
 </div>
 
 <script type="text/javascript">
+
+	var lat;
+	var long;
 	
 
 // var city = prompt("Enter a city you would like to know the weather for!");
@@ -52,24 +62,96 @@
 // var iconURL = "<img src='http://openweathermap.org/img/w/"+icon+"'>"
 
 	
-	$("#submit").click(function() {
+	// $("#submit").click(function() {
+
+	// 	$("#weatherArea").empty();
+
+	// 	var city = $("#cityInput").val();
+	// 	var queryURL = "http://api.openweathermap.org/data/2.5/weather?q="+city+"&appid=44db6a862fba0b067b1930da0d769e98&units=imperial"
+	// 	var icon = '10d.png'
+	// 	var iconURL = "<img src='http://openweathermap.org/img/w/"+icon+"'>"
+
+	// 	$.ajax({url: queryURL, method: "GET"}).done(function(condition) {
+	// 		// alert(condition.weather[0].main)
+	// 		// $("#lol").append(condition.weather[0].main);
+	// 		$("#weatherArea").append("The temperature in "+city+" is: " + Math.round(condition.main.temp) + " Fahrenheit and it is " + condition.weather[0].main +" <img src='http://openweathermap.org/img/w/"+condition.weather[0].icon+".png'>")
+	// 	});
+	// 	$("#cityInput").val(null);
+
+	// });
+
+	// $("#submit").click(function() {
+
+	// 		navigator.geolocation.getCurrentPosition(function(storedData) {
+	// 			lat = storedData.coords.latitude;
+	// 			console.log(storedData.coords.latitude);
+	// 			long = storedData.coords.longitude;
+	// 			console.log(storedData.coords.longitude);
+	// 			// console.log(storedData.coords);
+
+
+
+
+	// 		})
+
+	// 	$("#weatherArea").empty();
+
+	// 	// var city = $("#cityInput").val();
+	// 	var queryURL = "http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&long="+long+"&appid=44db6a862fba0b067b1930da0d769e98&units=imperial"
+	// 	var icon = '10d.png'
+	// 	var iconURL = "<img src='http://openweathermap.org/img/w/"+icon+"'>"
+
+	// 	$.ajax({url: queryURL, method: "GET"}).done(function(condition) {
+	// 		// alert(condition.weather[0].main)
+	// 		// $("#lol").append(condition.weather[0].main);
+	// 		$("#weatherArea").append("The temperature in is: " + Math.round(condition.main.temp) + " Fahrenheit and it is " + condition.weather[0].main +" <img src='http://openweathermap.org/img/w/"+condition.weather[0].icon+".png'>")
+	// 	});
+
+	// 	$("#cityInput").val(null);
+
+	// });
+
+
+
+	$(".locateButton").click(function() {
+		locateMe();
+	});
+
+
+	function locateMe() {
 
 		$("#weatherArea").empty();
 
-		var city = $("#cityInput").val();
-		var queryURL = "http://api.openweathermap.org/data/2.5/weather?q="+city+"&appid=44db6a862fba0b067b1930da0d769e98&units=imperial"
-		var icon = '10d.png'
-		var iconURL = "<img src='http://openweathermap.org/img/w/"+icon+"'>"
+		function success(position) {
+				var	lat = position.coords.latitude;
+				var	long = position.coords.longitude;
+				console.log(lat);
+				console.log(long);
 
-		$.ajax({url: queryURL, method: "GET"}).done(function(condition) {
-			// alert(condition.weather[0].main)
-			// $("#lol").append(condition.weather[0].main);
-			$("#weatherArea").append("The temperature in "+city+" is: " + Math.round(condition.main.temp) + " Fahrenheit and it is " + condition.weather[0].main +" <img src='http://openweathermap.org/img/w/"+condition.weather[0].icon+".png'>")
-		});
-		$("#cityInput").val(null);
+				var queryURL = "http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+long+"&appid=44db6a862fba0b067b1930da0d769e98&units=imperial";
 
-	});
 
+				$.ajax({url: queryURL, method: "GET"}).done(function(condition) {
+					$("#weatherArea").append("The temperature in "+condition.name+" is: " + Math.round(condition.main.temp) + " Fahrenheit and it is " + condition.weather[0].main +". <img src='http://openweathermap.org/img/w/"+condition.weather[0].icon+".png'>");
+					console.log(condition)
+
+
+					var sporityURL = "https://api.spotify.com/v1/search?q=" + condition.weather[0].main + "&type=playlist";
+
+					$.ajax({url: sporityURL, method: 'GET'}).done(function(spotify) {
+						console.log(spotify);
+						$("#playlistArea").append('<iframe src="https://embed.spotify.com/?uri=' + spotify.playlists.items[0].uri + '&view=coverart&theme=white" frameborder="0" allowtransparency="true" width="300" height="380"></iframe>');
+					});
+
+
+				});
+
+		};
+	
+		navigator.geolocation.getCurrentPosition(success);		
+	}
+
+	locateMe();
 
 	// $.ajax({url: queryURL, method: "GET"}).done(function(condition) {
 	// 	// alert(condition.weather[0].main)
@@ -78,20 +160,35 @@
 
 	// })
 
-	var x = document.getElementById("demo");
+	// $.ajax({url: queryURL, method: "GET"}).done(function(condition) {
+	// 	// alert(condition.weather[0].main)
+	// 	// $("#lol").append(condition.weather[0].main);
+	// 	$("#weatherArea").append("The temperature in "+city+" is: " + Math.round(condition.main.temp) + " Fahrenheit and it is " + condition.weather[0].main +". <img src='http://openweathermap.org/img/w/"+condition.weather[0].icon+".png'>")
 
-	function getLocation() {
-	    if (navigator.geolocation) {
-	        navigator.geolocation.getCurrentPosition(showPosition);
-	    } else { 
-	        x.innerHTML = "Geolocation is not supported by this browser.";
-	    }
-	}
+	// })
 
-	function showPosition(position) {
-	    x.innerHTML = "Latitude: " + position.coords.latitude + 
-	    "<br>Longitude: " + position.coords.longitude;	
-	}
+	// navigator.geolocation.getCurrentPosition(function(storedData) {
+	// 	lat = storedData.coords.latitude;
+	// 	console.log(storedData.coords.latitude);
+	// 	long = storedData.coords.longitude;
+	// 	console.log(storedData.coords.longitude);
+	// 	// console.log(storedData.coords);
+	// })
+
+	// var x = document.getElementById("demo");
+
+	// function getLocation() {
+	//     if (navigator.geolocation) {
+	//         navigator.geolocation.getCurrentPosition(showPosition);
+	//     } else { 
+	//         x.innerHTML = "Geolocation is not supported by this browser.";
+	//     }
+	// }
+
+	// function showPosition(position) {
+	//     x.innerHTML = "Latitude: " + position.coords.latitude + 
+	//     "<br>Longitude: " + position.coords.longitude;	
+	// }
 
 </script>
 
@@ -106,16 +203,16 @@
 h1 {
 	font-size:100px;
 	font-family: 'Sanchez', serif;
-/*	text-shadow: 2px 2px 10px black;*/
+	text-shadow: 2px 2px 10px black;
 }
 
 .higlight {
 	color:pink;
 }
 
-button {
+/*button {
 	width:100%;
-}
+}*/
 
 body {
 	background-image:url("rain.jpg");
