@@ -132,7 +132,13 @@
 				console.log(lat);
 				console.log(long);
 
-				var queryURL = "http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+long+"&appid=44db6a862fba0b067b1930da0d769e98&units=imperial";
+				var time = new Date();
+				var hours = time.getHours();
+				console.log(time);
+				console.log(time.toLocaleString())
+				console.log(time.getHours())
+
+				var queryURL = "https://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+long+"&appid=44db6a862fba0b067b1930da0d769e98&units=imperial";
 
 
 				$.ajax({url: queryURL, method: "GET"}).done(function(condition) {
@@ -154,7 +160,14 @@
 					} else if (weatherCode >= 700 && weatherCode < 800) {
 						playlistSearch = "atmospheric"
 					} else if (weatherCode == 800) {
-						playlistSearch = "clear day"
+
+						if (4 > hours > 20) {
+							playlistSearch = "stargazing"
+						} else {
+							playlistSearch = "beautiful day"
+						}
+
+						
 					} else if (weatherCode >= 800 && weatherCode < 900) {
 						playlistSearch = "cloudy+days"
 					} else if (weatherCode >= 900 && weatherCode < 950) {
