@@ -7,6 +7,7 @@
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 	<link href='https://fonts.googleapis.com/css?family=Sanchez' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Quicksand|Sacramento|Sansita+One|Merienda+One|Lilita+One|Quando' rel='stylesheet' type='text/css'>
 </head>
 <body>
 
@@ -16,32 +17,35 @@
 		
 		<div class="col-md-12 text-center">
 			<h1>What's the weather?</h1>
-			<br>
-			<br>
-			<br>		
 		</div>
 
-		<div class="row">
+		<!-- <div class="row">
 			<div class="col-md-6 col-md-offset-2">
 				<input class="form-control input-lg" id="cityInput">
+				
 			</div>
 			<div class="col-md-2">
 				<button class="btn btn-default btn-lg btn-block" id="submit">Submit</button>
 				<br><br>
 			</div>
+		</div> -->
+
+		<div class="row">
+			<div class="col-md-12 text-center">
+				<button class="btn-default btn-lg locateButton">Locate Me!</button>
+			</div>
 		</div>
 
 		<div class="row">
 
-			<button class="btn-primary btn-lg locateButton">Try It</button>
 			<p id="demo"></p>
 
-			<div class="col-md-8 col-md-offset-2">
+			<div class="col-md-10 col-md-offset-1">
 
 			<!-- 	<iframe src="https://embed.spotify.com/?uri=spotify:user:erebore:playlist:788MOXyTfcUb1tdw4oC7KJ" width="250" height="80" frameborder="0" allowtransparency="true"></iframe> -->
 
 				<div id="weatherArea" class="text-center"></div>
-
+				<br><br><br>
 				<div id="playlistArea"></div>
 
 			</div>
@@ -135,12 +139,42 @@
 					$("#weatherArea").append("The temperature in "+condition.name+" is: " + Math.round(condition.main.temp) + " Fahrenheit and it is " + condition.weather[0].main +". <img src='http://openweathermap.org/img/w/"+condition.weather[0].icon+".png'>");
 					console.log(condition)
 
+					var weatherCode = condition.weather[0].id;
+					console.log(weatherCode);
+					var playlistSearch;
 
-					var sporityURL = "https://api.spotify.com/v1/search?q=" + condition.weather[0].main + "&type=playlist";
+					if ( weatherCode < 300 ) {
+						playlistSearch = "stormy weather playlist"
+					} else if (weatherCode >= 300 && weatherCode < 400) {
+						playlistSearch = "light rain"
+					} else if (weatherCode >= 500 && weatherCode < 600) {
+						playlistSearch = "rainy day"
+					} else if (weatherCode >= 600 && weatherCode < 700) {
+						playlistSearch = "snow day"
+					} else if (weatherCode >= 700 && weatherCode < 800) {
+						playlistSearch = "atmospheric"
+					} else if (weatherCode == 800) {
+						playlistSearch = "clear day"
+					} else if (weatherCode >= 800 && weatherCode < 900) {
+						playlistSearch = "cloudy+days"
+					} else if (weatherCode >= 900 && weatherCode < 950) {
+						playlistSearch = "thrash metal"
+					};
+ 
 
-					$.ajax({url: sporityURL, method: 'GET'}).done(function(spotify) {
+
+
+
+					var spotifyURL = "https://api.spotify.com/v1/search?q=" + playlistSearch + "&type=playlist";
+					console.log(spotifyURL)
+
+					$.ajax({url: spotifyURL, method: 'GET'}).done(function(spotify) {
 						console.log(spotify);
-						$("#playlistArea").append('<iframe src="https://embed.spotify.com/?uri=' + spotify.playlists.items[0].uri + '&view=coverart&theme=white" frameborder="0" allowtransparency="true" width="300" height="380"></iframe>');
+
+						for (var i = 0; i < 3; i++) {
+							$("#playlistArea").append('<iframe src="https://embed.spotify.com/?uri=' + spotify.playlists.items[i].uri + '" frameborder="0" allowtransparency="true" width="300" height="380"></iframe>');
+						};
+
 					});
 
 
@@ -196,19 +230,26 @@
 
 #weatherArea {
 	font-size:50px;
-	font-family: 'Sanchez', serif;
+	/*font-family: 'Sanchez', serif;*/
+	font-family: 'Lilita One', cursive;
 /*	text-shadow: 2px 2px 10px black;*/
+	/*font-family: 'Sacramento', cursive;*/
+	/*text-shadow: 0px 0px 2px black;*/
 }
 
 h1 {
 	font-size:100px;
-	font-family: 'Sanchez', serif;
-	text-shadow: 2px 2px 10px black;
+	/*font-family: 'Sacramento', cursive;*/
+	/*font-family: 'Sansita One', cursive;*/
+	/*font-family: 'Merienda One', cursive;*/
+	font-family: 'Lilita One', cursive;
+
+	text-shadow: 0px 0px 2px black;
 }
 
-.higlight {
+/*.higlight {
 	color:pink;
-}
+}*/
 
 /*button {
 	width:100%;
@@ -219,6 +260,9 @@ body {
 	color:white;
 }
 
+iframe {
+	margin:5px;
+}
 
 
 </style>
